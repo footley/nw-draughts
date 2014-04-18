@@ -1,4 +1,10 @@
 {
-  "name": "checkers",
-  "main": "index.html"
+  "name": "draughts",
+  "main": "index.html",
+  "window": {
+    "title": "Draughts",
+    "toolbar": true,
+    "width": 800,
+    "height": 600
+  }
 }
