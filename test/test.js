@@ -7,25 +7,33 @@ describe('Pieces', function(){
     var b = new draughts.Board(8);
 
     it('pieces can only move forward', function(){
-        assert.equal(false, b.canmove(b.black[8], 0, 0));
-        assert.equal(false, b.canmove(b.white[8], 7, 7));
+        b.turn = draughts.BLACK;
+        assert.equal(JSON.stringify({'result': false, 'taken': []}), JSON.stringify(b.canmove(b.black[8], 0, 0)));
+        b.turn = draughts.WHITE;
+        assert.equal(JSON.stringify({'result': false, 'taken': []}), JSON.stringify(b.canmove(b.white[8], 7, 7)));
     });
 
     it('pieces can only move forward', function(){
-        assert.equal(false, b.canmove(b.black[8], 0, 0));
-        assert.equal(false, b.canmove(b.white[8], 7, 7));
+        b.turn = draughts.BLACK;
+        assert.equal(JSON.stringify({'result': false, 'taken': []}), JSON.stringify(b.canmove(b.black[8], 0, 0)));
+        b.turn = draughts.WHITE;
+        assert.equal(JSON.stringify({'result': false, 'taken': []}), JSON.stringify(b.canmove(b.white[8], 7, 7)));
     });
 
     it("pieces can't move to occupied spaces", function(){
-        assert.equal(false, b.canmove(b.black[1], 0, 1));
-        assert.equal(false, b.canmove(b.white[8], 5, 6));
+        b.turn = draughts.BLACK;
+        assert.equal(JSON.stringify({'result': false, 'taken': []}), JSON.stringify(b.canmove(b.black[1], 0, 1)));
+        b.turn = draughts.WHITE;
+        assert.equal(JSON.stringify({'result': false, 'taken': []}), JSON.stringify(b.canmove(b.white[8], 5, 6)));
     });
 
     it("pieces must move diagonally", function(){
-        assert.equal(true, b.canmove(b.black[11], 6, 3));
-        assert.equal(true, b.canmove(b.white[0], 1, 4));
-        assert.equal(false, b.canmove(b.black[11], 7, 3));
-        assert.equal(false, b.canmove(b.white[0], 0, 4));
+        b.turn = draughts.BLACK;
+        assert.equal(JSON.stringify({'result': true, 'taken': []}), JSON.stringify(b.canmove(b.black[11], 6, 3)));
+        assert.equal(JSON.stringify({'result': false, 'taken': []}), JSON.stringify(b.canmove(b.black[11], 7, 3)));
+        b.turn = draughts.WHITE;
+        assert.equal(JSON.stringify({'result': true, 'taken': []}), JSON.stringify(b.canmove(b.white[0], 1, 4)));
+        assert.equal(JSON.stringify({'result': false, 'taken': []}), JSON.stringify(b.canmove(b.white[0], 0, 4)));
     });
   })
 });
