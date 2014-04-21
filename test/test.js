@@ -4,7 +4,7 @@ var draughts = require("../js/models");
 describe('Pieces', function(){
   describe('movement', function(){
 
-    var b = new draughts.Board(8);
+    var b = new draughts.Game(8);
 
     it('pieces can only move forward', function(){
         b.turn = draughts.BLACK;
@@ -41,7 +41,7 @@ describe('Pieces', function(){
 describe('Board', function(){
   describe('initialization', function(){
 
-    var b = new draughts.Board(8);
+    var b = new draughts.Game(8);
 
     it('there should be (boardsize / 2) * 3 pieces of each team', function(){
       assert.equal(12, b.black.length);

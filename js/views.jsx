@@ -49,52 +49,22 @@ var Square = React.createClass({
 });
 
 var Board = React.createClass({
-  getInitialState: function() {
-    this.board = new draughts.Board(this.props.size);
-    this.pickedPiece = null;
-    this.hoverSquare = null;
-    return this.board;
-  },
-  handlePiecePickedUp: function(e, piece) {
-    this.pickedPiece = piece;
-    piece.inhand = true;
-    this.setState(this.board);
-  },
-  handlePieceDropped: function(e, piece) {
-    piece.inhand = false;
-    var canmove = this.board.canmove(piece, this.hoverSquare.x, this.hoverSquare.y);
-    if(canmove.result)
-    {
-        this.board.move(piece, this.hoverSquare.x, this.hoverSquare.y);
-        this.setState(this.board);
-    }
-  },
-  handleSquareEntered: function(e, square) {
-    this.hoverSquare = square;
-    var canmove = this.board.canmove(this.pickedPiece, this.hoverSquare.x, this.hoverSquare.y);
-    square.drop = canmove.result ? "drop" : "nodrop";
-    this.setState(this.board);
-  },
-  handleSquareLeft: function(e, square) {
-    square.drop = "";
-    this.setState(this.board);
-  },
   render: function() {
     var that = this;
-    var squares = this.state.squares.map(function (square) {
+    var squares = this.props.board.squares.map(function (square) {
       return <Square
                 key={square.getKey()}
                 data={square}
-                onSquareEntered={that.handleSquareEntered}
-                onSquareLeft={that.handleSquareLeft}
+                onSquareEntered={that.props.handleSquareEntered}
+                onSquareLeft={that.props.handleSquareLeft}
              ></Square>;
     });
-    var pieces = this.state.black.concat(this.state.white).map(function (piece) {
+    var pieces = this.props.black.concat(this.props.white).map(function (piece) {
       return <Piece
                 key={piece.getKey()}
                 data={piece}
-                onPiecePickedUp={that.handlePiecePickedUp}
-                onPieceDropped={that.handlePieceDropped}
+                onPiecePickedUp={that.props.handlePiecePickedUp}
+                onPieceDropped={that.props.handlePieceDropped}
              ></Piece>;
     });
     return (
@@ -106,7 +76,68 @@ var Board = React.createClass({
   }
 });
 
+var GameInfo = React.createClass({
+    render: function() {
+        return (
+            <div>
+                <span id="turn">{this.props.game.turn}</span>
+            </div>
+        );
+    }
+});
+
+var Game = React.createClass({
+    getInitialState: function() {
+        this.game = new draughts.Game(this.props.boardsize);
+        this.pickedPiece = null;
+        this.hoverSquare = null;
+        return this.game;
+    },
+    handlePiecePickedUp: function(e, piece) {
+        this.pickedPiece = piece;
+        piece.inhand = true;
+        this.setState(this.game);
+    },
+    handlePieceDropped: function(e, piece) {
+        piece.inhand = false;
+        var canmove = this.game.canmove(piece, this.hoverSquare.x, this.hoverSquare.y);
+        if(canmove.result)
+        {
+            this.game.move(piece, this.hoverSquare.x, this.hoverSquare.y);
+            this.setState(this.game);
+        }
+    },
+    handleSquareEntered: function(e, square) {
+        this.hoverSquare = square;
+        var canmove = this.game.canmove(this.pickedPiece, this.hoverSquare.x, this.hoverSquare.y);
+        square.drop = canmove.result ? "drop" : "nodrop";
+        this.setState(this.game);
+    },
+    handleSquareLeft: function(e, square) {
+        square.drop = "";
+        this.setState(this.game);
+    },
+    render: function() {
+        return (
+            <div className="game">
+                <GameInfo
+                    game={this.state}
+                ></GameInfo>
+                <Board
+                    board={this.state.board}
+                    black={this.state.black}
+                    white={this.state.white}
+                    handlePiecePickedUp={this.handlePiecePickedUp}
+                    handlePieceDropped={this.handlePieceDropped}
+                    handleSquareEntered={this.handleSquareEntered}
+                    handleSquareLeft={this.handleSquareLeft}
+                ></Board>
+            </div>
+        );
+    }
+});
+
 React.renderComponent(
-  <Board size="8" />,
+  <Game boardsize="8" />,
   document.getElementById('container')
 );
