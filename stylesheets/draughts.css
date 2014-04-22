@@ -1,5 +1,5 @@
 .reset {
-    margin-left: 200px;
+    margin-left: 246px;
 }
 
 .turn {
@@ -9,7 +9,7 @@
 .board {
     width: 400px;
     height: 400px;
-    border: 1px solid black;
+    border: 2px solid black;
     position: relative;
 }
 
@@ -23,11 +23,11 @@
 }
 
 .black.piece {
-    background-color: darkslategrey;
+    background-color: black;
 }
 
 .white.piece {
-    background-color: grey;
+    background-color: cornsilk;
 }
 
 .square {
@@ -37,11 +37,11 @@
 }
 
 .black.square {
-    background-color: black;
+    background-color: darkslategrey;
 }
 
 .white.square {
-    background-color: white;
+    background-color: grey;
 }
 
 .drop {
