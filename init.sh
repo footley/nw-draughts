@@ -1,4 +1,5 @@
 #!/bin/bash
+mkdir output
 rm -rf resources
 mkdir resources
 curl http://dl.node-webkit.org/v0.9.2/node-webkit-v0.9.2-linux-x64.tar.gz > resources/node-webkit-v0.9.2-linux-x64.tar.gz
