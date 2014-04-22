@@ -80,7 +80,13 @@ var GameInfo = React.createClass({
     render: function() {
         return (
             <div>
-                <span id="turn">{this.props.game.turn}</span>
+                <span className={"player" + (this.props.game.turn === draughts.BLACK ? " turn" : "")}>Black</span>
+                <span className="score"> {this.props.game.blackscore} - {this.props.game.whitescore} </span>
+                <span className={"player" + (this.props.game.turn === draughts.WHITE ? " turn" : "")}>White</span>
+                <a href="#" 
+                    className="reset"
+                    onClick={this.props.handleReset}
+                    >Restart</a>
             </div>
         );
     }
@@ -92,6 +98,12 @@ var Game = React.createClass({
         this.pickedPiece = null;
         this.hoverSquare = null;
         return this.game;
+    },
+    handleReset: function(e) {
+        this.game = new draughts.Game(this.props.boardsize);
+        this.pickedPiece = null;
+        this.hoverSquare = null;
+        this.setState(this.game);
     },
     handlePiecePickedUp: function(e, piece) {
         this.pickedPiece = piece;
@@ -122,6 +134,7 @@ var Game = React.createClass({
             <div className="game">
                 <GameInfo
                     game={this.state}
+                    handleReset={this.handleReset}
                 ></GameInfo>
                 <Board
                     board={this.state.board}

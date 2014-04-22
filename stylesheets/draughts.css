@@ -1,4 +1,11 @@
-/* http://jsfiddle.net/T4YQ8/ */
+.reset {
+    margin-left: 200px;
+}
+
+.turn {
+    font-weight: bold;
+}
+
 .board {
     width: 400px;
     height: 400px;

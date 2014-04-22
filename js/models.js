@@ -77,6 +77,8 @@ var draughts = draughts || {};
         this.board = new draughts.Board(boardsize);
         this.black = [];
         this.white = [];
+        this.blackscore = 0;
+        this.whitescore = 0;
         var i=0;
         for(var y=0; y<3; y++) {
             for(var x=1; x<boardsize; x+=2) {
@@ -106,6 +108,10 @@ var draughts = draughts || {};
             return;
         for(var i=0; i<res.taken.length; i++) {
             res.taken[i].take();
+            if(res.taken[i].team === draughts.BLACK)
+                this.whitescore++;
+            else if(res.taken[i].team === draughts.WHITE)
+                this.blackscore++;
         }
         piece.move(x, y);
         this.turn = this.turn === draughts.BLACK ? draughts.WHITE : draughts.BLACK;
