@@ -8,16 +8,15 @@ var Piece = React.createClass({
     this.props.onPieceDropped(e, this.props.data);
   },
   render: function() {
-    var classes = "piece";
-    classes += " " + this.props.data.team;
-    if(this.props.data.inhand)
-        classes += " inhand";
-    if(!this.props.data.active)
-        classes += " inactive";
-    if(this.props.data.king)
-        classes += " king";
-    if(this.props.data.tobetaken)
-        classes += " tobetaken";
+    var classes = React.addons.classSet({
+        "piece": true,
+        "black": this.props.data.team === draughts.BLACK,
+        "white": this.props.data.team === draughts.WHITE,
+        "inhand": this.props.data.inhand,
+        "inactive": !this.props.data.active,
+        "king": this.props.data.king,
+        "tobetaken": this.props.data.tobetaken
+    });
     return (
         <div
             className={classes}
@@ -38,9 +37,16 @@ var Square = React.createClass({
     this.props.onSquareLeft(e, this.props.data);
   },
   render: function() {
+    var classes = React.addons.classSet({
+        "square": true,
+        "drop": this.props.data.drop === "drop",
+        "nodrop": this.props.data.drop === "nodrop",
+        "black": this.props.data.color === draughts.BLACK,
+        "white": this.props.data.color === draughts.WHITE,
+    });
     return (
         <div
-            className={"square " + this.props.data.color + " " + this.props.data.drop}
+            className={classes}
             data-x={this.props.data.x}
             data-y={this.props.data.y}
             onDragEnter={this.handleDragEnter}
@@ -52,23 +58,22 @@ var Square = React.createClass({
 
 var Board = React.createClass({
   render: function() {
-    var that = this;
-    var squares = this.props.board.squares.map(function (square) {
+    var squares = this.props.board.squares.map((function (square) {
       return <Square
                 key={square.getKey()}
                 data={square}
-                onSquareEntered={that.props.handleSquareEntered}
-                onSquareLeft={that.props.handleSquareLeft}
+                onSquareEntered={this.props.handleSquareEntered}
+                onSquareLeft={this.props.handleSquareLeft}
              ></Square>;
-    });
-    var pieces = this.props.black.concat(this.props.white).map(function (piece) {
+    }).bind(this));
+    var pieces = this.props.black.concat(this.props.white).map((function (piece) {
       return <Piece
                 key={piece.getKey()}
                 data={piece}
-                onPiecePickedUp={that.props.handlePiecePickedUp}
-                onPieceDropped={that.props.handlePieceDropped}
+                onPiecePickedUp={this.props.handlePiecePickedUp}
+                onPieceDropped={this.props.handlePieceDropped}
              ></Piece>;
-    });
+    }).bind(this));
     return (
       <div className="board">
         {squares}
@@ -80,11 +85,19 @@ var Board = React.createClass({
 
 var GameInfo = React.createClass({
     render: function() {
+        var blackClasses = React.addons.classSet({
+            "player": true,
+            "turn": this.props.game.turn === draughts.BLACK
+        });
+        var whiteClasses = React.addons.classSet({
+            "player": true,
+            "turn": this.props.game.turn === draughts.WHITE
+        });
         return (
             <div>
-                <span className={"player" + (this.props.game.turn === draughts.BLACK ? " turn" : "")}>Black</span>
-                <span className="score"> {this.props.game.blackscore} - {this.props.game.whitescore} </span>
-                <span className={"player" + (this.props.game.turn === draughts.WHITE ? " turn" : "")}>White</span>
+                <span className={blackClasses}>Black {this.props.game.blackscore}</span>
+                <span>  -  </span>
+                <span className={whiteClasses}>{this.props.game.whitescore} White</span>
                 <a href="#" 
                     className="reset"
                     onClick={this.props.handleReset}
@@ -114,7 +127,8 @@ var Game = React.createClass({
     },
     handlePieceDropped: function(e, piece) {
         piece.inhand = false;
-        var canmove = this.game.canmove(piece, this.hoverSquare.x, this.hoverSquare.y);
+        var canmove = this.game.canmove(
+            piece, this.hoverSquare.x, this.hoverSquare.y);
         if(canmove.result)
         {
             this.game.move(piece, this.hoverSquare.x, this.hoverSquare.y);
@@ -122,10 +136,12 @@ var Game = React.createClass({
         }
     },
     handleSquareEntered: function(e, square) {
-        // we wrap this code in a timeout so that handleSquareLeft is gurenteed to happen first
+        // we wrap this code in a timeout so that handleSquareLeft 
+        // is guarenteed to happen first
         setTimeout((function(){
             this.hoverSquare = square;
-            var canmove = this.game.canmove(this.pickedPiece, this.hoverSquare.x, this.hoverSquare.y);
+            var canmove = this.game.canmove(
+                this.pickedPiece, this.hoverSquare.x, this.hoverSquare.y);
             square.drop = canmove.result ? "drop" : "nodrop";
             for(var i=0; i<canmove.taken.length; i++)
                 canmove.taken[i].tobetaken = true;
