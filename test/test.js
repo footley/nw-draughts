@@ -38,6 +38,28 @@ describe('Pieces', function(){
   })
 });
 
+describe('Pieces', function(){
+  describe('jump movement', function(){
+
+    var b = new draughts.Game(8);
+    b.black[9].x = 4;
+    b.black[9].y = 3;
+    b.white[3].x = 5;
+    b.white[3].y = 4;
+    b.white[10].take();
+
+    it('pieces can jump take multiple times', function(){
+        var res = b.canmove(b.black[9], 4, 7);
+        assert.equal(true, res.result);
+        assert.equal(2, res.taken.length);
+        assert.equal(5, res.taken[0].x);
+        assert.equal(4, res.taken[0].y);
+        assert.equal(5, res.taken[1].x);
+        assert.equal(6, res.taken[1].y);
+    });
+  });
+});
+
 describe('Board', function(){
   describe('initialization', function(){
 

@@ -15,7 +15,9 @@ var Piece = React.createClass({
     if(!this.props.data.active)
         classes += " inactive";
     if(this.props.data.king)
-        classes += " king"
+        classes += " king";
+    if(this.props.data.tobetaken)
+        classes += " tobetaken";
     return (
         <div
             className={classes}
@@ -120,12 +122,21 @@ var Game = React.createClass({
         }
     },
     handleSquareEntered: function(e, square) {
-        this.hoverSquare = square;
-        var canmove = this.game.canmove(this.pickedPiece, this.hoverSquare.x, this.hoverSquare.y);
-        square.drop = canmove.result ? "drop" : "nodrop";
-        this.setState(this.game);
+        // we wrap this code in a timeout so that handleSquareLeft is gurenteed to happen first
+        setTimeout((function(){
+            this.hoverSquare = square;
+            var canmove = this.game.canmove(this.pickedPiece, this.hoverSquare.x, this.hoverSquare.y);
+            square.drop = canmove.result ? "drop" : "nodrop";
+            for(var i=0; i<canmove.taken.length; i++)
+                canmove.taken[i].tobetaken = true;
+            this.setState(this.game);
+        }).bind(this));
     },
     handleSquareLeft: function(e, square) {
+        for(var i=0; i<this.game.black.length; i++)
+            this.game.black[i].tobetaken = false;
+        for(var i=0; i<this.game.white.length; i++)
+            this.game.white[i].tobetaken = false;
         square.drop = "";
         this.setState(this.game);
     },

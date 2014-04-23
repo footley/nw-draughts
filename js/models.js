@@ -39,10 +39,6 @@ var draughts = draughts || {};
     };
 
     draughts.Piece.prototype.move = function(x, y) {
-        var canmove = this.board.canmove(this, x, y);
-        if(!canmove.result)
-            return false;
-
         this.x = x;
         this.y = y;
 
@@ -150,35 +146,71 @@ var draughts = draughts || {};
             return {'result': true, 'taken': []};
 
         // or move is diagonal and two spaces, with an oposition piece in between
-        if(piece.x+2 === x && piece.y+2 === y) {
-            var taken = issquareoccupied(this.opositionTeam(), piece.x+1, piece.y+1);
-            return {'result': true, 'taken': [taken]};
-        }
-        if(piece.x-2 === x && piece.y-2 === y) {
-            var taken = issquareoccupied(this.opositionTeam(), piece.x-1, piece.y-1);
-            return {'result': true, 'taken': [taken]};
-        }
-        if(piece.x+2 === x && piece.y-2 === y) {
-            var taken = issquareoccupied(this.opositionTeam(), piece.x+1, piece.y-1);
-            return {'result': true, 'taken': [taken]};
-        }
-        if(piece.x-2 === x && piece.y+2 === y) {
-            var taken = issquareoccupied(this.opositionTeam(), piece.x-1, piece.y+1);
-            return {'result': true, 'taken': [taken]};
-        }
-
+        var taken = canmove(piece.x, piece.y, x, y, piece.king, piece.team, this.opositionTeam());
+        if(taken)
+            return {'result': true, 'taken': taken};
+        
         return {'result': false, 'taken': []};
     };
 
     // helpers
     function issquareoccupied(team, x, y) {
-        for(var i=0; i<team.length; i++)
-        {
+        for(var i=0; i<team.length; i++) {
             if(team[i].x === x && team[i].y === y)
                 return team[i];
         }
         return false;
     };
+
+    function canmove(from_x, from_y, to_x, to_y, isking, team, opositionTeam, checked) {
+        checked = checked || [];
+        var key = from_x.toString()+","+from_y.toString();
+        if(checked.indexOf(key) !== -1)
+            return null;
+        checked.push(key); 
+
+        // starting at (from_x, from_y) can we move to (to_x, to_y) always taking oposition pieces?
+        // if piece is not king then it can only move forward.
+
+        // first there must be an adjacent oposition piece, lets look for one and jump it
+        
+        if(isking || team === draughts.BLACK) {
+            var res = __fragment(1, 1, from_x, from_y, to_x, to_y, opositionTeam, isking, team, checked);
+            if(res)
+                return res;
+
+            var res = __fragment(-1, 1, from_x, from_y, to_x, to_y, opositionTeam, isking, team, checked);
+            if(res)
+                return res;
+        }
+
+        if(isking || team === draughts.WHITE) {
+            var res = __fragment(-1, -1, from_x, from_y, to_x, to_y, opositionTeam, isking, team, checked);
+            if(res)
+                return res;
+
+            var res = __fragment(+1, -1, from_x, from_y, to_x, to_y, opositionTeam, isking, team, checked);
+            if(res)
+                return res;
+        }
+        
+        return null;
+    };
+
+    function __fragment(xmove, ymove, from_x, from_y, to_x, to_y, opositionTeam, isking, team, checked)
+    {
+        var taken = issquareoccupied(opositionTeam, from_x+xmove, from_y+ymove);
+        if(taken) {
+            if(from_x+(xmove*2) === to_x && from_y+(ymove*2) === to_y)
+                return [taken];
+            else {
+                var result = canmove(from_x+(xmove*2), from_y+(ymove*2), to_x, to_y, isking, team, opositionTeam, checked)
+                if(result)
+                    return [taken].concat(result);
+            }
+        }
+        return null;
+    }
 })();
 
 if(typeof module !== "undefined")

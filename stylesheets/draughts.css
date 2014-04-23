@@ -6,6 +6,10 @@
     font-weight: bold;
 }
 
+.tobetaken {
+    background-color: red !important;
+}
+
 .board {
     width: 400px;
     height: 400px;
@@ -66,8 +70,18 @@
     display: none;
 }
 
-.piece.king {
-    box-shadow: 4px 4px 0 3px gray;
+.piece.king.black {
+    border: 2px solid cornsilk;
+    width: 40px;
+    height: 40px;
+    padding: 2px;
+}
+
+.piece.king.white {
+    border: 2px solid black;
+    width: 40px;
+    height: 40px;
+    padding: 2px;
 }
 
 [data-x="0"] {
