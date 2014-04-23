@@ -19,8 +19,7 @@ function rmdirrec(path) {
     }
 };
 
-function copyfiles(inputs, destinations, callback)
-{
+function copyfiles(inputs, destinations, callback) {
     var r = fs.createReadStream(inputs.pop());
     r.pipe(fs.createWriteStream(destinations.pop()));
     r.on('close', function(){
@@ -33,28 +32,13 @@ function copyfiles(inputs, destinations, callback)
     });
 }
 
-function cat(inputs, destination, callback) {
-    var output = fs.createWriteStream(destination);
-    (function __inner(output, inputs) {
-        debugger
-        var input = fs.createReadStream( inputs.shift() );
-        input.pipe(output);
-        input.on('end', function () {
-            if(inputs.length > 0) {
-                __inner(output, inputs);
-            }
-        });
-    })(output, inputs);
-
-    output.on('close', callback)
-}
-
 program
     .version('0.0.1')
     .option('-r, --run', 'Run after build')
     .option('-l, --linux', 'Package for linux')
     .option('-w, --windows', 'Package for windows')
     .option('-m, --mac', 'Package for max osx')
+    .option('-c, --config [type]', '[release] or [debug]', 'debug')
     .parse(process.argv);
 
 rmdirrec("output");
@@ -114,11 +98,13 @@ function create_packages() {
         fs.mkdirSync("output/macosx");
         exec("cp -R resources/node-webkit-v0.9.2-osx-ia32/node-webkit.app/ output/macosx/nw-draughts.app/", function(){
             exec("cp output/draughts.nw output/macosx/nw-draughts.app/Contents/Resources/app.nw", function() {
-                console.log("mac-osx package created at output/macosx/nw-draughts.app");
-                if(program.run) {
-                    console.log("running windows package");
-                    exec("./output/macosx/nw-draughts.app");
-                }
+                exec("cd output/macosx/ && zip -r nw-draughts.app.zip nw-draughts.app/*", function() {
+                    console.log("mac-osx package created at output/macosx/nw-draughts.app");
+                    if(program.run) {
+                        console.log("running windows package");
+                        exec("./output/macosx/nw-draughts.app");
+                    }
+                });
             });
         });
     }
