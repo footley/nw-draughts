@@ -83,8 +83,8 @@ function create_packages() {
              'output/windows/nw.pak'],
             function(){
                 exec("cat resources/node-webkit-v0.9.2-win-ia32/nw.exe output/draughts.nw > output/windows/draughts.exe", function(){
-                    exec("zip -j output/windows/nw-draughts.zip output/windows/*", function(){
-                        console.log("windows package created at output/windows/nw-draughts.zip");
+                    exec("zip -j output/windows/nw-draughts-win.zip output/windows/*", function(){
+                        console.log("windows package created at output/windows/nw-draughts-win.zip");
                         if(program.run) {
                             console.log("running windows package");
                             exec("./output/windows/draughts.exe");
@@ -98,8 +98,8 @@ function create_packages() {
         fs.mkdirSync("output/macosx");
         exec("cp -R resources/node-webkit-v0.9.2-osx-ia32/node-webkit.app/ output/macosx/nw-draughts.app/", function(){
             exec("cp output/draughts.nw output/macosx/nw-draughts.app/Contents/Resources/app.nw", function() {
-                exec("cd output/macosx/ && zip -r nw-draughts.app.zip nw-draughts.app/*", function() {
-                    console.log("mac-osx package created at output/macosx/nw-draughts.app");
+                exec("cd output/macosx/ && zip -r nw-draughts-osx.app.zip nw-draughts.app/*", function() {
+                    console.log("mac-osx package created at output/macosx/nw-draughts-osx.app.zip");
                     if(program.run) {
                         console.log("running windows package");
                         exec("./output/macosx/nw-draughts.app");
